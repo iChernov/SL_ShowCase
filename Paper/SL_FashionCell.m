@@ -18,7 +18,7 @@
         UIImageView *backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Cell"]];
         self.backgroundView = backgroundView;
         
-        self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(3, 3, 150, 150)];
+        self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(3, 3, 70, 70)];
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         self.imageView.clipsToBounds = YES;
         [self.contentView addSubview:self.imageView];

@@ -6,32 +6,36 @@
 //  Copyright (c) 2014 Heberti Almeida. All rights reserved.
 //
 
+#import "HAAppDelegate.h"
+#import "SL_IconDownloader.h"
 #import "HAPaperCollectionViewController.h"
 #import "HATransitionLayout.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "SL_StoreRecord.h"
 #import "SL_FashionCell.h"
+#import "SDWebImageDecoder.h"
+#import "SDWebImageManager.h"
+#import "SDWebImageOperation.h"
 
-#define MAX_COUNT 20
+#define MAX_COUNT 15
 #define CELL_ID @"CELL_ID"
 
-@interface HAPaperCollectionViewController () {
-    
+@interface HAPaperCollectionViewController () <UIScrollViewDelegate> {
     BOOL _loadingInProgress;
     id <SDWebImageOperation> _webImageOperation;
-    
 }
+@property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
 
 @end
 
 
-@implementation HAPaperCollectionViewController
+@implementation HAPaperCollectionViewController 
 
 - (id)initWithCollectionViewLayout:(UICollectionViewFlowLayout *)layout
 {
     if (self = [super initWithCollectionViewLayout:layout])
     {
-        [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:CELL_ID];
+        [self.collectionView registerClass:[SL_FashionCell class] forCellWithReuseIdentifier:CELL_ID];
         [self.collectionView setBackgroundColor:[UIColor clearColor]];
     }
     return self;
@@ -41,6 +45,41 @@
 - (BOOL)prefersStatusBarHidden
 {
     return YES;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.imageDownloadsInProgress = [NSMutableDictionary dictionary];
+    
+    HAAppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
+    self.managedObjectContext = appDelegate.managedObjectContext;
+}
+
+- (void)startIconDownload:(SL_StoreRecord *)storeRecord forIndexPath:(NSIndexPath *)indexPath
+{
+    SL_IconDownloader *iconDownloader = [self.imageDownloadsInProgress objectForKey:indexPath];
+    if (iconDownloader == nil)
+    {
+        iconDownloader = [[SL_IconDownloader alloc] init];
+        iconDownloader.storeRecord = storeRecord;
+        [iconDownloader setCompletionHandler:^{
+            
+            SL_FashionCell *cell = (SL_FashionCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+            
+            // Display the newly loaded image
+            
+            cell.imageView.image  = [UIImage imageWithData:storeRecord.thingImageData];
+            
+            // Remove the IconDownloader from the in progress list.
+            // This will result in it being deallocated.
+            [self.imageDownloadsInProgress removeObjectForKey:indexPath];
+            
+        }];
+        [self.imageDownloadsInProgress setObject:iconDownloader forKey:indexPath];
+        [iconDownloader startDownload];
+    }
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -80,35 +119,10 @@
         // Only load cached images; defer new downloads until scrolling ends
         if (!storeRecord.thingImageData)
         {
-            if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
-            {
-                @try {
-                    SDWebImageManager *manager = [SDWebImageManager sharedManager];
-                    _webImageOperation = [manager downloadWithURL:_photoURL
-                                                          options:0
-                                                         progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                                             if (expectedSize > 0) {
-                                                                 float progress = receivedSize / (float)expectedSize;
-                                                                 NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                       [NSNumber numberWithFloat:progress], @"progress",
-                                                                                       self, @"photo", nil];
-                                                                 [[NSNotificationCenter defaultCenter] postNotificationName:MWPHOTO_PROGRESS_NOTIFICATION object:dict];
-                                                             }
-                                                         }
-                                                        completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
-                                                            if (error) {
-                                                                MWLog(@"SDWebImage failed to download image: %@", error);
-                                                            }
-                                                            _webImageOperation = nil;
-                                                            self.underlyingImage = image;
-                                                            [self imageLoadingComplete];
-                                                        }];
-                } @catch (NSException *e) {
-                    NSLog(@"Photo from web: %@", e);
-                    _webImageOperation = nil;
-                    [self imageLoadingComplete];
-                }
-            }
+            NSLog(@"DRAGGING: %hhd", self.collectionView.dragging);
+
+               [self startIconDownload:storeRecord forIndexPath:indexPath];
+
             // if a download is deferred or in progress, return a placeholder image
             cell.imageView.image = [UIImage imageNamed:@"Placeholder.png"];
         }
@@ -118,8 +132,16 @@
         }
         
     }
-    
+    NSLog(@"%d %d", indexPath.row, nodeCount);
+    if (indexPath.row == nodeCount - 2)
+        [self launchAdditionalLoad];
     return cell;
+}
+
+- (void)launchAdditionalLoad
+{
+    HAAppDelegate * appDelegate = [UIApplication sharedApplication].delegate;
+    [appDelegate loadRecordsFrom: [self.entries count]];
 }
 
 

@@ -334,7 +334,7 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     HASmallCollectionViewController *rootViewController = (HASmallCollectionViewController *)[self.navigationController topViewController];
     // fill table with CoreData entries
 
-    rootViewController. .entries = [self getAllFashionRecords];
+    rootViewController.entries = [self getAllFashionRecords];
     [rootViewController.collectionView reloadData];
 }
 
