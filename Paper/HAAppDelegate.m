@@ -88,6 +88,7 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     
     HACollectionViewSmallLayout *smallLayout = [[HACollectionViewSmallLayout alloc] init];
     HASmallCollectionViewController *collectionViewController = [[HASmallCollectionViewController alloc] initWithCollectionViewLayout:smallLayout];
+    [collectionViewController setRestorationIdentifier:@"rootView"];
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:collectionViewController];
     self.navigationController.delegate = self;
     self.navigationController.navigationBarHidden = YES;
@@ -263,7 +264,8 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
             // The root rootViewController is the only child of the navigation
             // controller, which is the window's rootViewController.
             
-            HASmallCollectionViewController *rootViewController = (HASmallCollectionViewController *)[self.navigationController topViewController];
+            NSLog(@"%@", [[self.navigationController topViewController] class]);
+            HAPaperCollectionViewController *rootViewController = (HAPaperCollectionViewController *)self.navigationController.viewControllers[0];
 
             // fill table with CoreData entries
             rootViewController.entries = [self getAllFashionRecords];
@@ -410,6 +412,16 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+-(BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder
+{
+    return YES;
+}
+
+-(BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
+{
+    return YES;
 }
 
 @end

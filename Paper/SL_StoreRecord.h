@@ -15,5 +15,6 @@
 @property (nonatomic, strong) NSString *artist;
 @property (nonatomic, strong) NSString *imageURLString;
 @property (nonatomic, strong) NSString *thingURLString;
+@property (nonatomic, strong) NSString *thingDesc;
 
 @end

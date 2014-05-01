@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5041" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="FashionEntity" representedClassName="FashionEntity" syncable="YES">
         <attribute name="artist" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="imageURLString" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="thingDesc" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="thingImageData" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="thingName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="thingURLString" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="FashionEntity" positionX="-63" positionY="-18" width="128" height="135"/>
+        <element name="FashionEntity" positionX="-63" positionY="-18" width="128" height="150"/>
     </elements>
 </model>

@@ -11,8 +11,6 @@
 @interface SL_FashionCell : UICollectionViewCell
 
 @property (strong, nonatomic) UIImageView *imageView;
-@property (strong, nonatomic) UILabel *titleLabel;
-@property (strong, nonatomic) UILabel *subtitleLabel;
-@property (strong, nonatomic) UILabel *detailsLabel;
+@property (strong, nonatomic) UITextView *textView;
 
 @end

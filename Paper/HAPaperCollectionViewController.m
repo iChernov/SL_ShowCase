@@ -9,6 +9,7 @@
 #import "HAAppDelegate.h"
 #import "SL_IconDownloader.h"
 #import "HAPaperCollectionViewController.h"
+#import "HACollectionViewLargeLayout.h"
 #import "HATransitionLayout.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "SL_StoreRecord.h"
@@ -108,19 +109,11 @@
         // Set up the cell...
         SL_StoreRecord *storeRecord = [self.entries objectAtIndex:indexPath.row];
         
-        cell.titleLabel.font = [UIFont systemFontOfSize:11.0];
-        cell.titleLabel.numberOfLines = 2;
-        cell.titleLabel.adjustsFontSizeToFitWidth = YES;
-        
-		cell.titleLabel.text = storeRecord.thingName;
-        
-        cell.detailsLabel.font = [UIFont systemFontOfSize:10.0];
-        cell.detailsLabel.text = storeRecord.artist;
+        cell.textView.text = [NSString stringWithFormat:@"%@\n\n%@\n\n%@", storeRecord.thingName, storeRecord.artist, storeRecord.thingDesc];
 		
         // Only load cached images; defer new downloads until scrolling ends
         if (!storeRecord.thingImageData)
         {
-            NSLog(@"DRAGGING: %hhd", self.collectionView.dragging);
 
                [self startIconDownload:storeRecord forIndexPath:indexPath];
 
@@ -133,7 +126,6 @@
         }
         
     }
-    NSLog(@"%d %d", indexPath.row, nodeCount);
     if (indexPath.row == nodeCount - 2)
         [self launchAdditionalLoad];
     return cell;
@@ -142,7 +134,7 @@
 - (void)launchAdditionalLoad
 {
     HAAppDelegate * appDelegate = [UIApplication sharedApplication].delegate;
-    [appDelegate loadRecordsFrom: [self.entries count]];
+    [appDelegate loadRecordsFrom: (int)[self.entries count]];
 }
 
 

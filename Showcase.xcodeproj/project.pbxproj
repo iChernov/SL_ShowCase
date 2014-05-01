@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		035BD1AA191045AB009C4FF4 /* FashionModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 035BD1A8191045AB009C4FF4 /* FashionModel.xcdatamodeld */; };
-		035BD1AD191045DB009C4FF4 /* FashionEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 035BD1AC191045DB009C4FF4 /* FashionEntity.m */; };
 		035BD1B51910464D009C4FF4 /* SL_IconDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 035BD1B01910464D009C4FF4 /* SL_IconDownloader.m */; };
 		035BD1B61910464D009C4FF4 /* SL_ParseOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 035BD1B21910464D009C4FF4 /* SL_ParseOperation.m */; };
 		035BD1B71910464D009C4FF4 /* SL_StoreRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 035BD1B41910464D009C4FF4 /* SL_StoreRecord.m */; };
@@ -21,6 +20,7 @@
 		035BD1C71910530E009C4FF4 /* SL_FashionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 035BD1C61910530E009C4FF4 /* SL_FashionCell.m */; };
 		035BD1C919105D37009C4FF4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 035BD1C819105D37009C4FF4 /* QuartzCore.framework */; };
 		035BD1CB19105D3C009C4FF4 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 035BD1CA19105D3C009C4FF4 /* AssetsLibrary.framework */; };
+		03FF07141912FF1B002B088A /* FashionEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 03FF07131912FF1B002B088A /* FashionEntity.m */; };
 		1A1B02CB18AAF00D000DE3F8 /* HAPaperCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1B02CA18AAF00D000DE3F8 /* HAPaperCollectionViewController.m */; };
 		1A1B02D918AAF0B9000DE3F8 /* HATransitionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1B02D318AAF0B9000DE3F8 /* HATransitionController.m */; };
 		1A1B02DA18AAF0B9000DE3F8 /* HATransitionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A1B02D518AAF0B9000DE3F8 /* HATransitionLayout.m */; };
@@ -55,8 +55,6 @@
 
 /* Begin PBXFileReference section */
 		035BD1A9191045AB009C4FF4 /* FashionModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FashionModel.xcdatamodel; sourceTree = "<group>"; };
-		035BD1AB191045DB009C4FF4 /* FashionEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FashionEntity.h; sourceTree = "<group>"; };
-		035BD1AC191045DB009C4FF4 /* FashionEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FashionEntity.m; sourceTree = "<group>"; };
 		035BD1AF1910464D009C4FF4 /* SL_IconDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SL_IconDownloader.h; sourceTree = "<group>"; };
 		035BD1B01910464D009C4FF4 /* SL_IconDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SL_IconDownloader.m; sourceTree = "<group>"; };
 		035BD1B11910464D009C4FF4 /* SL_ParseOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SL_ParseOperation.h; sourceTree = "<group>"; };
@@ -73,6 +71,8 @@
 		035BD1C61910530E009C4FF4 /* SL_FashionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SL_FashionCell.m; sourceTree = "<group>"; };
 		035BD1C819105D37009C4FF4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		035BD1CA19105D3C009C4FF4 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		03FF07121912FF1B002B088A /* FashionEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FashionEntity.h; sourceTree = "<group>"; };
+		03FF07131912FF1B002B088A /* FashionEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FashionEntity.m; sourceTree = "<group>"; };
 		0FF3526664F34E6FA7150635 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A1B02C918AAF00D000DE3F8 /* HAPaperCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HAPaperCollectionViewController.h; sourceTree = "<group>"; };
 		1A1B02CA18AAF00D000DE3F8 /* HAPaperCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HAPaperCollectionViewController.m; sourceTree = "<group>"; };
@@ -136,9 +136,9 @@
 		035BD1A719104590009C4FF4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				03FF07121912FF1B002B088A /* FashionEntity.h */,
+				03FF07131912FF1B002B088A /* FashionEntity.m */,
 				035BD1A8191045AB009C4FF4 /* FashionModel.xcdatamodeld */,
-				035BD1AB191045DB009C4FF4 /* FashionEntity.h */,
-				035BD1AC191045DB009C4FF4 /* FashionEntity.m */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -428,7 +428,6 @@
 			files = (
 				035BD1B71910464D009C4FF4 /* SL_StoreRecord.m in Sources */,
 				1A1B02D918AAF0B9000DE3F8 /* HATransitionController.m in Sources */,
-				035BD1AD191045DB009C4FF4 /* FashionEntity.m in Sources */,
 				1AFA137018A11F5D00F2D2BF /* HACollectionViewLargeLayout.m in Sources */,
 				1A1B02CB18AAF00D000DE3F8 /* HAPaperCollectionViewController.m in Sources */,
 				035BD1AA191045AB009C4FF4 /* FashionModel.xcdatamodeld in Sources */,
@@ -436,6 +435,7 @@
 				035BD1B51910464D009C4FF4 /* SL_IconDownloader.m in Sources */,
 				1A1B02DA18AAF0B9000DE3F8 /* HATransitionLayout.m in Sources */,
 				035BD1B61910464D009C4FF4 /* SL_ParseOperation.m in Sources */,
+				03FF07141912FF1B002B088A /* FashionEntity.m in Sources */,
 				1AA0CC2918A07EBC008F50F6 /* HAAppDelegate.m in Sources */,
 				1AFA136D18A11E2400F2D2BF /* HACollectionViewSmallLayout.m in Sources */,
 				1A1B02DF18AAF68A000DE3F8 /* HASmallCollectionViewController.m in Sources */,
@@ -505,6 +505,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ivan Chernov (D42TSPLE9M)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -543,6 +544,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ivan Chernov (D42TSPLE9M)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
