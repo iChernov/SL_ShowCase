@@ -38,6 +38,7 @@
         [self.collectionView registerClass:[SL_FashionCell class] forCellWithReuseIdentifier:CELL_ID];
         [self.collectionView setBackgroundColor:[UIColor clearColor]];
     }
+    
     return self;
 }
 
@@ -146,7 +147,7 @@
 
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return MAX_COUNT;
+    return [self.entries count];
 }
 
 
