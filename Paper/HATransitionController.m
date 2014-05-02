@@ -204,7 +204,6 @@
 
 - (void)oneFingerGesture:(UIPanGestureRecognizer *)sender
 {
-        CGPoint point = [sender locationInView:sender.view];
 }
 
 

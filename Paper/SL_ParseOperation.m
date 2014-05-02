@@ -45,7 +45,6 @@
     NSError *e = nil;
     NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:self.dataToParse options:NSJSONReadingMutableContainers error: &e];
     
-    NSLog(@"JSON: %@", JSON);
     NSArray *items = [JSON objectForKey:@"items"];
     [self fillWorkingArrayWithItems: items];
     NSString *dateString = [JSON objectForKey:@"timestamp"];

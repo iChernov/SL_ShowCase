@@ -403,7 +403,6 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 
 -(BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
 {
-    NSLog(@"%ld", self.genderIndex);
     [[NSUserDefaults standardUserDefaults] setInteger:self.genderIndex forKey:kGenderIndex];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
