@@ -45,6 +45,7 @@
     NSError *e = nil;
     NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:self.dataToParse options:NSJSONReadingMutableContainers error: &e];
     
+    NSLog(@"JSON: %@", JSON);
     NSArray *items = [JSON objectForKey:@"items"];
     [self fillWorkingArrayWithItems: items];
     NSString *dateString = [JSON objectForKey:@"timestamp"];
@@ -77,6 +78,7 @@
             thing.thingName = [self getCorrectString:[product objectForKey:@"name"]];
             thing.thingDesc = [self getCorrectString:[product objectForKey:@"desc"]];
             thing.artist = [self getCorrectString:[[product objectForKey:@"brand"] objectForKey:@"bname"]];
+            thing.gender  = [self getCorrectString:[[product objectForKey:@"gender"] objectForKey:@"genname"]];
             thing.imageURLString = [self getCorrectString:[self extractMainImageFromArray: [product objectForKey:@"images"]]];
             thing.thingURLString = [self getCorrectString:[product objectForKey:@"url"]];
         } else if (([[item allKeys] containsObject:@"board"])
@@ -93,6 +95,7 @@
         FashionEntity * newEntry = [NSEntityDescription insertNewObjectForEntityForName:@"FashionEntity"
                                                           inManagedObjectContext:self.managedObjectContext];
         newEntry.thingName = thing.thingName;
+        newEntry.gender = thing.gender;
         newEntry.artist = thing.artist;
         newEntry.imageURLString = thing.imageURLString;
         newEntry.thingURLString = thing.thingURLString;

@@ -11,6 +11,7 @@
 @interface SL_StoreRecord : NSObject
 
 @property (nonatomic, strong) NSString *thingName;
+@property (nonatomic, strong) NSString *gender;
 @property (nonatomic, strong) NSData *thingImageData;
 @property (nonatomic, strong) NSString *artist;
 @property (nonatomic, strong) NSString *imageURLString;

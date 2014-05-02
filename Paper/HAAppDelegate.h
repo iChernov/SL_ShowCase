@@ -24,5 +24,6 @@
 - (NSArray*)getAllFashionRecords;
 - (void)loadRecordsFrom:(int)amountOfLoadedRecords;
 - (void)eraseAllRecords;
+- (void)reloadWithGender:(NSInteger)genderIndex;
 
 @end

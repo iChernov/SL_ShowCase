@@ -18,11 +18,10 @@
 #import "SDWebImageManager.h"
 #import "SDWebImageOperation.h"
 
-#define MAX_COUNT 15
 #define CELL_ID @"CELL_ID"
-
 @interface HAPaperCollectionViewController () <UIScrollViewDelegate> {
     BOOL _loadingInProgress;
+    NSInteger _previousLoadCaller;
     id <SDWebImageOperation> _webImageOperation;
 }
 @property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
@@ -36,6 +35,7 @@
 {
     if (self = [super initWithCollectionViewLayout:layout])
     {
+        _previousLoadCaller = -1;
         [self.collectionView registerClass:[SL_FashionCell class] forCellWithReuseIdentifier:CELL_ID];
         [self.collectionView setBackgroundColor:[UIColor clearColor]];
     }
@@ -55,8 +55,6 @@
     
     self.imageDownloadsInProgress = [NSMutableDictionary dictionary];
     
-    HAAppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
-    self.managedObjectContext = appDelegate.managedObjectContext;
 }
 
 - (void)startIconDownload:(SL_StoreRecord *)storeRecord forIndexPath:(NSIndexPath *)indexPath
@@ -126,15 +124,19 @@
         }
         
     }
-    if (indexPath.row == nodeCount - 2)
-        [self launchAdditionalLoad];
+    if (indexPath.row == nodeCount - 3)
+        [self launchAdditionalLoadWithCaller:indexPath.row];
     return cell;
 }
 
-- (void)launchAdditionalLoad
+- (void)launchAdditionalLoadWithCaller:(NSInteger)callerID
 {
-    HAAppDelegate * appDelegate = [UIApplication sharedApplication].delegate;
-    [appDelegate loadRecordsFrom: (int)[self.entries count]];
+    if(_previousLoadCaller != callerID)
+    {
+        _previousLoadCaller = callerID;
+        HAAppDelegate * appDelegate = [UIApplication sharedApplication].delegate;
+        [appDelegate loadRecordsFrom: (int)[self.entries count]];
+    }
 }
 
 
@@ -168,5 +170,14 @@
     // Adjust scrollView decelerationRate
     self.collectionView.decelerationRate = self.class != [HAPaperCollectionViewController class] ? UIScrollViewDecelerationRateNormal : UIScrollViewDecelerationRateFast;
 }
+
+- (void) encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+}
+
+- (void) decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+}
+
 
 @end

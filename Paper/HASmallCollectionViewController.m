@@ -8,6 +8,7 @@
 
 #import "HASmallCollectionViewController.h"
 #import "HACollectionViewLargeLayout.h"
+#import "HAAppDelegate.h"
 
 @interface HASmallCollectionViewController ()
 
@@ -15,6 +16,7 @@
 @property (nonatomic, strong) UIView *mainView;
 @property (nonatomic, strong) UIImageView *topImage;
 @property (nonatomic, strong) UIImageView *reflected;
+@property (nonatomic, strong) UISegmentedControl *genderControl;
 @property (nonatomic, strong) NSArray *galleryImages;
 
 @end
@@ -25,6 +27,10 @@
 {
     UIViewController *vc = [self nextViewControllerAtPoint:CGPointZero];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)setGenderIndex:(NSInteger)genderIndex {
+    [self.genderControl setSelectedSegmentIndex:genderIndex];
 }
 
 - (UICollectionViewController *)nextViewControllerAtPoint:(CGPoint)point
@@ -58,7 +64,6 @@
     [_mainView addSubview:_topImage];
     [_mainView addSubview:_reflected];
     
-    
     // Reflect imageView
     _reflected.transform = CGAffineTransformMakeScale(1.0, -1.0);
     
@@ -66,7 +71,7 @@
     // Gradient to top image
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = _topImage.bounds;
-    gradient.colors = @[(id)[[UIColor colorWithRed:0 green:0 blue:0 alpha:0.4] CGColor],
+    gradient.colors = @[(id)[[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5] CGColor],
                         (id)[[UIColor colorWithWhite:0 alpha:0] CGColor]];
     [_topImage.layer insertSublayer:gradient atIndex:0];
     
@@ -134,8 +139,13 @@
     [subTitle.layer setShadowOpacity:0.8];
     [_mainView addSubview:subTitle];
     
-    // selector - men women
-    
+    // selector - men or women
+    _genderControl = [[UISegmentedControl alloc] initWithItems:@[@"M",@"W"]];
+    [_genderControl addTarget:self action:@selector(genderChanged:) forControlEvents: UIControlEventValueChanged];
+    _genderControl.tintColor = [UIColor whiteColor];
+    _genderControl.userInteractionEnabled = YES;
+    _genderControl.frame = CGRectMake(250, 10, 60, 30);
+    [self.view addSubview:_genderControl];
     
     // First Load
     [self changeSlide];
@@ -143,6 +153,11 @@
     // Loop gallery
     NSTimer *timer = [NSTimer timerWithTimeInterval:5.0f target:self selector:@selector(changeSlide) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+}
+
+- (void)genderChanged:(id)sender {
+    HAAppDelegate * appDelegate = [UIApplication sharedApplication].delegate;
+    [appDelegate reloadWithGender: _genderControl.selectedSegmentIndex];
 }
 
 #pragma mark - Change slider
@@ -161,6 +176,14 @@
                     } completion:nil];
     _slide++;
     //    }
+}
+
+- (void) encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+}
+
+- (void) decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
 }
 
 @end

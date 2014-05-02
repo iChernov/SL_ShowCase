@@ -13,8 +13,11 @@
 #import "SL_ParseOperation.h"
 #import "SL_StoreRecord.h"
 
+#define kGenderIndex @"kGenderIndex"
+
 static const int recordsPerPage = 15; //have to be changed only with pageItems parameter in stylightAPIURL !
-static NSString *const stylightAPIURL = @"http://api.stylight.com/api/new?gender=men&initializeBoards=true&initializeRows=1024000&pageItems=15&page=";
+static NSString *const stylightAPIURLStart = @"http://api.stylight.com/api/new?gender=";
+static NSString *const stylightAPIURLEnd = @"&initializeBoards=true&initializeRows=1024000&pageItems=15&page=";
 static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 
 
@@ -23,9 +26,11 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 @property (nonatomic, strong) NSOperationQueue *queue;
 // RSS feed network connection to the App Store
 @property (nonatomic, strong) NSURLConnection *thingsListConnection;
+@property (nonatomic) NSInteger genderIndex;
 @property (nonatomic, strong) NSMutableData *thingsListData;
 @property (nonatomic) UINavigationController *navigationController;
 @property (nonatomic) HATransitionController *transitionController;
+@property (nonatomic, strong) HASmallCollectionViewController *collectionViewController;
 
 @end
 
@@ -85,67 +90,33 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.genderIndex = [[NSUserDefaults standardUserDefaults] integerForKey:kGenderIndex];
     
     HACollectionViewSmallLayout *smallLayout = [[HACollectionViewSmallLayout alloc] init];
-    HASmallCollectionViewController *collectionViewController = [[HASmallCollectionViewController alloc] initWithCollectionViewLayout:smallLayout];
-    [collectionViewController setRestorationIdentifier:@"rootView"];
-    self.navigationController = [[UINavigationController alloc] initWithRootViewController:collectionViewController];
+    self.collectionViewController = [[HASmallCollectionViewController alloc] initWithCollectionViewLayout:smallLayout];
+    [self.collectionViewController setGenderIndex:self.genderIndex];
+    [self.collectionViewController setRestorationIdentifier:@"rootView"];
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.collectionViewController];
     self.navigationController.delegate = self;
     self.navigationController.navigationBarHidden = YES;
     
-    self.transitionController = [[HATransitionController alloc] initWithCollectionView:collectionViewController.collectionView];
+    self.transitionController = [[HATransitionController alloc] initWithCollectionView:self.collectionViewController.collectionView];
     self.transitionController.delegate = self;
     
     self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
     
-    if (![self wereFashionRecordsLoaded]) {
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-        [request setValue:stylightAPIKey forHTTPHeaderField:@"X-apiKey"];
-        NSString *urlString = [NSString stringWithFormat:@"%@0", stylightAPIURL];
-        [request setURL:[NSURL URLWithString:urlString]];
-        [request setHTTPMethod:@"GET"];
-        
-        self.thingsListConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-        
-        // Test the validity of the connection object. The most likely reason for the connection object
-        // to be nil is a malformed URL, which is a programmatic error easily detected during development
-        // If the URL is more dynamic, then you should implement a more flexible validation technique, and
-        // be able to both recover from errors and communicate problems to the user in an unobtrusive manner.
-        //
-        NSAssert(self.thingsListConnection != nil, @"Failure to create URL connection.");
-        
-        // show in the status bar that network activity is starting
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    }
+    [self performInitialDownloadIfNeeded];
     
     return YES;
 }
 
 - (void)loadRecordsFrom:(int)amountOfLoadedRecords
 {
-    /*    NSDate *lastDate = (NSDate *)[[NSUserDefaults standardUserDefaults] objectForKey:@"myDateKey"];
-     NSDate *currentDate = [NSDate date];
-     NSTimeInterval distanceBetweenDates = [currentDate timeIntervalSinceDate:lastDate];
-     double secondsInAMinute = 60;
-     NSInteger minutesBetweenDates = distanceBetweenDates / secondsInAMinute;
-     if(minutesBetweenDates < 15)
-     {
-     int waitingTime = 15 - minutesBetweenDates;
-     NSLog(@"%d", minutesBetweenDates);
-     NSString *message = [NSString stringWithFormat:@"You are performing requests to our API too often - please, wait at least %d minutes", waitingTime];
-     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Cannot Show Information"
-     message:message
-     delegate:nil
-     cancelButtonTitle:@"OK"
-     otherButtonTitles:nil];
-     [alertView show];
-     } else { */
-    
     int pageToLoad = amountOfLoadedRecords/recordsPerPage;
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setValue:stylightAPIKey forHTTPHeaderField:@"X-apiKey"];
-    NSString *urlString = [NSString stringWithFormat:@"%@%d", stylightAPIURL, pageToLoad];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@%@%d", stylightAPIURLStart, self.genderIndex == 0 ? @"men" : @"women", stylightAPIURLEnd, pageToLoad];
     [request setURL:[NSURL URLWithString:urlString]];
     [request setHTTPMethod:@"GET"];
     
@@ -161,17 +132,8 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     // show in the status bar that network activity is starting
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     //    }
-    
-    //
-    // If the program have to limit calls to API to one per 15 minutes - that is not possible to
-    // fulfill the requirement “infinite” scrolling — your application should load additional batches of data on scroll;
-    // but I leave the possibility to make this limitation here
-    //
 }
 
-// -------------------------------------------------------------------------------
-//	handleError:error
-// -------------------------------------------------------------------------------
 - (void)handleError:(NSError *)error
 {
     NSString *errorMessage = [error localizedDescription];
@@ -189,25 +151,16 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 //
 #pragma mark - NSURLConnectionDelegate methods
 
-// -------------------------------------------------------------------------------
-//	connection:didReceiveResponse:response
-// -------------------------------------------------------------------------------
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     self.thingsListData = [NSMutableData data];    // start off with new data
 }
 
-// -------------------------------------------------------------------------------
-//	connection:didReceiveData:data
-// -------------------------------------------------------------------------------
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [self.thingsListData appendData:data];  // append incoming data
 }
 
-// -------------------------------------------------------------------------------
-//	connection:didFailWithError:error
-// -------------------------------------------------------------------------------
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
@@ -231,9 +184,6 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     self.thingsListConnection = nil;   // release our connection
 }
 
-// -------------------------------------------------------------------------------
-//	connectionDidFinishLoading:connection
-// -------------------------------------------------------------------------------
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     self.thingsListConnection = nil;   // release our connection
@@ -264,7 +214,6 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
             // The root rootViewController is the only child of the navigation
             // controller, which is the window's rootViewController.
             
-            NSLog(@"%@", [[self.navigationController topViewController] class]);
             HAPaperCollectionViewController *rootViewController = (HAPaperCollectionViewController *)self.navigationController.viewControllers[0];
 
             // fill table with CoreData entries
@@ -285,7 +234,7 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     self.thingsListData = nil;
 }
 
--(BOOL)wereFashionRecordsLoaded
+-(void)performInitialDownloadIfNeeded
 {
     NSArray *fashionRecords = [self getAllFashionRecords];
     if ([fashionRecords count] > 0) {
@@ -294,9 +243,25 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
         rootViewController.entries = fashionRecords;
         // tell our table view to reload its data, now that parsing has completed
         [rootViewController.collectionView reloadData];
-        return YES;
+    } else {
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setValue:stylightAPIKey forHTTPHeaderField:@"X-apiKey"];
+        NSString *urlString = [NSString stringWithFormat:@"%@%@%@0", stylightAPIURLStart, self.genderIndex == 0 ? @"men" : @"women", stylightAPIURLEnd];
+        [request setURL:[NSURL URLWithString:urlString]];
+        [request setHTTPMethod:@"GET"];
+        
+        self.thingsListConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+        
+        // Test the validity of the connection object. The most likely reason for the connection object
+        // to be nil is a malformed URL, which is a programmatic error easily detected during development
+        // If the URL is more dynamic, then you should implement a more flexible validation technique, and
+        // be able to both recover from errors and communicate problems to the user in an unobtrusive manner.
+        //
+        NSAssert(self.thingsListConnection != nil, @"Failure to create URL connection.");
+        
+        // show in the status bar that network activity is starting
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     }
-    return NO;
 }
 
 -(NSArray*)getAllFashionRecords
@@ -308,6 +273,10 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"FashionEntity"
                                               inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gender == %@", self.genderIndex == 0 ? @"Mann" : @"Frau"];
+    [fetchRequest setPredicate:predicate];
+    
     NSError* error;
     
     // Query on managedObjectContext With Generated fetchRequest
@@ -315,6 +284,18 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     
     // Returning Fetched Records
     return fetchedRecords;
+}
+
+-(void)reloadWithGender:(NSInteger)genderIndex {
+    self.genderIndex = genderIndex;
+    [self performInitialDownloadIfNeeded];
+    NSArray *fashionRecords = [self getAllFashionRecords];
+    if ([fashionRecords count] > 0) {
+        // fill table with CoreData entries
+        self.collectionViewController.entries = fashionRecords;
+        // tell our table view to reload its data, now that parsing has completed
+        [self.collectionViewController.collectionView reloadData];
+    }
 }
 
 -(void)eraseAllRecords
@@ -340,6 +321,7 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
     [rootViewController.collectionView reloadData];
 }
 
+#pragma mark - work with SmallCollection
 
 - (void)interactionBeganAtPoint:(CGPoint)point
 {
@@ -421,6 +403,10 @@ static NSString *const stylightAPIKey = @"D13A5A5A0A3602477A513E02691A8458";
 
 -(BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
 {
+    NSLog(@"%ld", self.genderIndex);
+    [[NSUserDefaults standardUserDefaults] setInteger:self.genderIndex forKey:kGenderIndex];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
     return YES;
 }
 

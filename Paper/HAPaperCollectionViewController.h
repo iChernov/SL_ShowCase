@@ -16,11 +16,8 @@
     NSManagedObjectContext *managedObjectContext;
 }
 
-- (IBAction)eraseCachedData:(id)sender;
 - (UICollectionViewController*)nextViewControllerAtPoint:(CGPoint)point;
 
-@property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
-@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, strong) NSArray *entries;
 
 

@@ -12,4 +12,6 @@
 
 @interface HASmallCollectionViewController : HAPaperCollectionViewController 
 
+- (void)setGenderIndex:(NSInteger)genderIndex;
+
 @end
