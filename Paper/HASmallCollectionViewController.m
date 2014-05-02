@@ -146,6 +146,7 @@
     _genderControl.userInteractionEnabled = YES;
     _genderControl.frame = CGRectMake(250, 10, 60, 30);
     [self.view addSubview:_genderControl];
+    [self.view bringSubviewToFront:_genderControl];
     
     // First Load
     [self changeSlide];

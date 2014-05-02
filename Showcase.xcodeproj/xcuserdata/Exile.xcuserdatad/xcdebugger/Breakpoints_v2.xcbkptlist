@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Paper/HASmallCollectionViewController.m"
-            timestampString = "420720916.260882"
+            timestampString = "420722793.766913"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
             landmarkName = "-changeSlide"
             landmarkType = "5">
          </BreakpointContent>
