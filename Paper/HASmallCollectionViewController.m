@@ -161,6 +161,10 @@
     [appDelegate reloadWithGender: _genderControl.selectedSegmentIndex];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [self.view bringSubviewToFront:_genderControl];
+}
+
 #pragma mark - Change slider
 - (void)changeSlide
 {
